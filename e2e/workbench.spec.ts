@@ -10,7 +10,7 @@ async function start(page: Page) {
 }
 const row = (page: Page, title: string) =>
   page
-    .getByRole("button")
+    .locator("button.step-row")
     .filter({ has: page.getByText(title, { exact: true }) });
 async function select(page: Page, title: string) {
   await row(page, title).click();
