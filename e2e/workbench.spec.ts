@@ -36,7 +36,9 @@ test("records evidence, persists reload and pauses on failure", async ({
   await select(page, "Confirm the release baseline");
   await complete(page);
   await page.reload();
-  await expect(page.getByText("1 / 8", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Plan overview" }).getByText(/1 \/ 8/),
+  ).toBeVisible();
   await select(page, "Deploy the canary");
   await page.getByRole("button", { name: "Start this step" }).click();
   await page
@@ -190,6 +192,8 @@ test("keeps a rehearsal usable when storage reads and writes are denied", async 
   await expect(page.getByRole("alert")).toContainText("unavailable");
   await start(page);
   await complete(page);
-  await expect(page.getByText("1 / 8", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Plan overview" }).getByText(/1 \/ 8/),
+  ).toBeVisible();
   await expect(page.getByRole("alert")).toContainText("Export JSON");
 });
