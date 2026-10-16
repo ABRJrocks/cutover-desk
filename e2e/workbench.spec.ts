@@ -101,26 +101,22 @@ test("imports a valid custom plan and preserves the workspace on invalid input",
   page,
 }) => {
   await page.getByRole("button", { name: "Import", exact: true }).click();
-  await page
-    .getByLabel("Choose JSON file")
-    .setInputFiles({
-      name: "bad.json",
-      mimeType: "application/json",
-      buffer: Buffer.from("{bad"),
-    });
+  await page.getByLabel("Choose JSON file").setInputFiles({
+    name: "bad.json",
+    mimeType: "application/json",
+    buffer: Buffer.from("{bad"),
+  });
   await expect(page.getByRole("alert")).toContainText("not valid JSON");
   await expect(
     page.getByRole("button", { name: "Replace local document" }),
   ).toBeDisabled();
   const imported = structuredClone(SAMPLE);
   imported.plan.title = "My migration rehearsal";
-  await page
-    .getByLabel("Choose JSON file")
-    .setInputFiles({
-      name: "plan.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(JSON.stringify(imported)),
-    });
+  await page.getByLabel("Choose JSON file").setInputFiles({
+    name: "plan.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(imported)),
+  });
   await page.getByRole("button", { name: "Replace local document" }).click();
   await expect(
     page.getByRole("heading", { name: "My migration rehearsal", exact: true }),
@@ -177,4 +173,23 @@ test("has no automated accessibility violations on planning and active forms", a
   await start(page);
   await page.getByRole("button", { name: "Start this step" }).click();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
+test("keeps a rehearsal usable when storage reads and writes are denied", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Storage.prototype.getItem = () => {
+      throw new DOMException("Denied", "SecurityError");
+    };
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Denied", "SecurityError");
+    };
+  });
+  await page.reload();
+  await expect(page.getByRole("alert")).toContainText("unavailable");
+  await start(page);
+  await complete(page);
+  await expect(page.getByText("1 / 8", { exact: true })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("Export JSON");
 });

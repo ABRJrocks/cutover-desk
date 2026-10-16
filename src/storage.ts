@@ -7,6 +7,16 @@ export function load(storage: StorageAccess) {
   let raw: string | null = null;
   try {
     raw = storage.getItem(STORAGE_KEY);
+  } catch {
+    return {
+      document: structuredClone(SAMPLE),
+      raw: null,
+      error:
+        "Browser storage is unavailable. Work stays in this tab. Export JSON before closing it.",
+      blocked: false,
+    };
+  }
+  try {
     return {
       document: raw === null ? structuredClone(SAMPLE) : decodeDocument(raw),
       raw,

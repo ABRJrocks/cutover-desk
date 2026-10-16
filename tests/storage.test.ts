@@ -48,5 +48,5 @@ it("reports quota and denied-storage failures without throwing away work", () =>
       },
       setItem: () => {},
     }).blocked,
-  ).toBe(true);
+  ).toBe(false);
 });
