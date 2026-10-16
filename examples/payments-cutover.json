@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "run": null,
+  "plan": {
+    "id": "payments-cutover",
+    "title": "Payments service cutover",
+    "summary": "Rehearse moving traffic to a new release, with an explicit go/no-go checkpoint and a verified recovery path.",
+    "windowMinutes": 60,
+    "steps": [
+      {
+        "id": "preflight",
+        "title": "Confirm the release baseline",
+        "owner": "Release lead",
+        "minutes": 5,
+        "dependsOn": [],
+        "instructions": "Confirm the approved build, contact roster and maintenance window. Keep the current deployment reference available.",
+        "verification": "Record the build reference and the named decision owner.",
+        "rollback": "Stop the change before modifying traffic.",
+        "kind": "action"
+      },
+      {
+        "id": "backup",
+        "title": "Verify the recovery point",
+        "owner": "Database lead",
+        "minutes": 12,
+        "dependsOn": ["preflight"],
+        "instructions": "Check the last verified backup and rehearse the restore procedure in an isolated environment.",
+        "verification": "Record the backup reference and observed restore-test result.",
+        "rollback": "Use the reviewed recovery procedure; assess any data written after the recovery point.",
+        "kind": "action"
+      },
+      {
+        "id": "canary",
+        "title": "Deploy the canary",
+        "owner": "Platform lead",
+        "minutes": 8,
+        "dependsOn": ["preflight"],
+        "instructions": "Deploy the candidate to the rehearsal environment and route a small test cohort.",
+        "verification": "Record the candidate version and test cohort result.",
+        "rollback": "Remove the candidate from routing and retain the previous version.",
+        "kind": "action"
+      },
+      {
+        "id": "smoke",
+        "title": "Run the acceptance checks",
+        "owner": "QA lead",
+        "minutes": 7,
+        "dependsOn": ["canary"],
+        "instructions": "Exercise authentication, payment creation and refund flows using test data.",
+        "verification": "Record the acceptance-test result and any failed checks.",
+        "rollback": "Stop progression and investigate the candidate.",
+        "kind": "action"
+      },
+      {
+        "id": "go-no-go",
+        "title": "Review the go/no-go decision",
+        "owner": "Release lead",
+        "minutes": 3,
+        "dependsOn": ["backup", "smoke"],
+        "instructions": "Review recovery evidence and acceptance results with the decision owner.",
+        "verification": "Record the decision and the evidence used. This is a rehearsal note, not a verified approval.",
+        "rollback": "Keep current routing and communicate the hold.",
+        "kind": "gate"
+      },
+      {
+        "id": "route",
+        "title": "Switch the traffic cohort",
+        "owner": "Platform lead",
+        "minutes": 5,
+        "dependsOn": ["go-no-go"],
+        "instructions": "Walk through the routing change, monitoring points and stop conditions. Do not execute live commands here.",
+        "verification": "Record the planned routing state and monitoring thresholds.",
+        "rollback": "Revert routing only after reviewing data consistency and the current system state.",
+        "kind": "action"
+      },
+      {
+        "id": "observe",
+        "title": "Observe the service window",
+        "owner": "Service owner",
+        "minutes": 10,
+        "dependsOn": ["route"],
+        "instructions": "Compare error rate and latency against the agreed baseline.",
+        "verification": "Record the observed test metrics and the decision to continue or stop.",
+        "rollback": "Use the reviewed rollback instructions if the stop condition is met.",
+        "kind": "action"
+      },
+      {
+        "id": "handoff",
+        "title": "Complete the operational handoff",
+        "owner": "Release lead",
+        "minutes": 5,
+        "dependsOn": ["observe"],
+        "instructions": "Share the rehearsal report, open issues and next owner.",
+        "verification": "Record the report location and the receiving owner.",
+        "rollback": "Keep the change open until ownership and follow-up work are assigned.",
+        "kind": "gate"
+      }
+    ]
+  }
+}
