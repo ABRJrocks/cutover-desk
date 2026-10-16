@@ -61,6 +61,6 @@ If local storage is unavailable or full, work stays in memory and a persistent w
 
 ## Hosting
 
-The app has no server API. Any conventional static server can serve `dist/` at a dedicated path, since built asset URLs are relative. Do not add untrusted scripts to the same origin as a sensitive workspace. The supplied content security policy restricts scripts and connections to the app's origin and disables object embedding, base URL changes and form submission.
+The app needs a modern browser in a secure context: HTTPS, `http://localhost` or `http://127.0.0.1`. A plain-HTTP internal hostname does not provide the UUID API required to start rehearsals. The app has no server API. Any conventional static server can serve `dist/` at a dedicated path, since built asset URLs are relative. Do not add untrusted scripts to the same origin as a sensitive workspace. The supplied content security policy restricts scripts and connections to the app's origin and disables object embedding, base URL changes and form submission.
 
 GitHub Actions builds and runs tests before publishing to Pages. Pull requests build artifacts but do not deploy. For your own fork, enable GitHub Pages with GitHub Actions as the build source. Internal hosting or localhost is preferable for non-public operational notes.

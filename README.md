@@ -51,7 +51,7 @@ npm run build
 npm run preview
 ```
 
-The default Vite server binds to `127.0.0.1`. Serve the built `dist/` directory using a local or internal static web server. Opening `index.html` directly through `file://` is not supported. The release also includes a prebuilt static archive, so an end user does not need Node to serve it. Assets and fonts are self-contained. A fresh visit to the hosted demo needs network access; this is not an installable offline PWA.
+Use a current Chromium-based browser over HTTPS or `http://localhost` / `http://127.0.0.1`. Rehearsal IDs use the browser secure-context UUID API. The default Vite server binds to `127.0.0.1`. Serve the built `dist/` directory using a local or internal static web server. Opening `index.html` directly through `file://` is not supported. The release also includes a prebuilt static archive, so an end user does not need Node to serve it. Assets and fonts are self-contained. A fresh visit to the hosted demo needs network access; this is not an installable offline PWA.
 
 ## Bring it into a process
 
